@@ -16,27 +16,28 @@ void generateMD5Hash(const char *password, unsigned char *hash) {
     MD5_Final(hash, &md5Context);
 }
 void doctor_menu() {
-    printf("Enter password : \n");
+    printf("\nEnter password : \n");
     scanf("%s",password);
+    printf("\n");
     unsigned char hash[MD5_DIGEST_LENGTH];
     generateMD5Hash(password, hash);
     unsigned char storedHash[MD5_DIGEST_LENGTH] = {
   	 0x38, 0xa0, 0xed, 0x46, 0xde, 0x4e, 0xb0, 0x76,
-    0xdc, 0x78, 0x20, 0xbb, 0x9f, 0x41, 0x19, 0xe7
+    	 0xdc, 0x78, 0x20, 0xbb, 0x9f, 0x41, 0x19, 0xe7
 	};
     if (memcmp(hash, storedHash, MD5_DIGEST_LENGTH) == 0) {
     printf("Password is correct. Access granted.\n");
 	} 
     else {
     printf("Incorrect password. Access denied.\n");
+	}
 }
-
+void patient_menu() {
+	printf("\n1. NEW \n2. EXISTING\nEnter any option :");
+	scanf("%d",&opt);	
 }
 int main(){
 
-    char hospital_name[] = "IITJ HOSPIAL";
-    char password[100];
-    int opt;
     FILE *fptr;
     fptr = fopen("Patients/aditya.txt","w");
     fprintf(fptr,"Hello");
@@ -54,13 +55,14 @@ int main(){
     for(int i=0;i<6;i++) printf(" ");
     printf("\n");
     baseline();
-    printf("1. PATIENT ( PRESS 0 ) \n2. DOCTORS ( PRESS 1 )\n");
-    printf("Enter : ");
+    printf("1. PATIENT ( PRESS 0 ) \n2. DOCTORS ( PRESS 1 )\nEnter any option : ");
     scanf("%d",&opt);
     baseline();
     switch(opt) 
     {
-    	case 0 : printf("\nPATIENT's MENU\n");
+    	case 0 : 
+    	printf("\nPATIENT's MENU\n");
+    	patient_menu();
     	break;
     	case 1 : 
     	printf("\nDOCTOR's MENU\n");
