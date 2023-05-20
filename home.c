@@ -2,9 +2,9 @@
 #include<string.h>
 #include<time.h>
 
-void createPatient();
-int patientId();
-void createDate();
+void createPatient(FILE*);
+int patientId(int,int);
+void createDate(char*);
 struct Patient{
     char name[100];
     int age;
@@ -40,13 +40,14 @@ void createPatient(FILE *fptr){
     scanf("%ld",&patient1.contact);
     //Code to generate Patient Id
     int patientid = patientId(patient1.age,patient1.dob);
+   
     //to get the date of record creation
     char date[100];
     createDate(date); 
     
     //Code to create patient file
     fptr = fopen("Patients/patient1.txt","w");
-    fprintf(fptr,"PatientID : %s                       Date : %s",patientid,date);
+    fprintf(fptr,"PatientID : %d                      Date : %s",patientid,date);
     fprintf(fptr,"Name : %s",patient1.name);
     fprintf(fptr,"Age : %d\n",patient1.age);
     fprintf(fptr,"Sex : %s",patient1.sex);
@@ -61,11 +62,12 @@ void createPatient(FILE *fptr){
 
 }
 int patientId(int age,int dob){
-    int id = dob;
+    int id = 0;
    while(age != 0){
         id = id * 10 + (age % 10);
         age = age / 10;
    }
+   id = id + dob;
    return id;
 }
 void createDate(char *date ){
