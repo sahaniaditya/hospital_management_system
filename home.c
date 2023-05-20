@@ -47,7 +47,6 @@ void createPatient(FILE *fptr){
     //Code to create patient file
     fptr = fopen("Patients/patient1.txt","w");
     fprintf(fptr,"PatientID : %s                       Date : %s",patientid,date);
-    
     fprintf(fptr,"Name : %s",patient1.name);
     fprintf(fptr,"Age : %d\n",patient1.age);
     fprintf(fptr,"Sex : %s",patient1.sex);
