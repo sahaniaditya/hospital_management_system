@@ -1,9 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<time.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <openssl/md5.h>
 #include <termios.h>
 #include <unistd.h>
