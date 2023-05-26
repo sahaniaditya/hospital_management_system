@@ -248,7 +248,7 @@ void createPatient(char *patientPass){
     fgets(patient.medHistory,1000,stdin);
 
     //Code to generate Patient Id
-    int patientid = patientId(patient.age,patient.dob);
+    int patientid = patientId(patient.contact,patient.dob);
     char patient_id[100];
     sprintf(patient_id, "%d", patientid);
     strcpy(patientPass,patient_id);
@@ -287,8 +287,11 @@ void createPatient(char *patientPass){
     
 }
 //patientId() function
-int patientId(char* age,char* dob){
-    int pass = atoi(dob);
+int patientId(char* contact,char* dob){
+    int con = atoi(contact);
+    int dob1 = atoi(dob);
+    int pass=con%100;
+    pass+=dob1;
     return pass;
 }
 
