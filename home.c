@@ -142,21 +142,25 @@ void scheduleVisit(char *name,char *patientid,char *path, char *path1){
     fflush(stdin);
     scanf("%s",date);
     if(ptr != NULL){
-    fprintf(ptr,"%s   %s                       %s             %s\n",patientid,name,doctor,date);
+    fprintf(ptr,"%s         %s                      %s          %s\n",patientid,name,doctor,date);
     }else{
         printf("Sorry. Not able to write  in file.\n");
     }
-    fprintf(fp,"%s   %s                       %s             %s\n",patientid,name,doctor,date);
+    fprintf(fp,"%s         %s                      %s          %s\n",patientid,name,doctor,date);
     fclose(ptr);
     fclose(fp);
+    printf("Thank you for scheduling a visit !!!\n");
+    baseline();
    
 }
 //visitRecord() function
 void visitRecord(char *path){
+     
      FILE *ptr;
     char str[100];
     ptr = fopen(path,"r");
     if(ptr != NULL){
+      printf("PatientID     Name                       Doctor                Date\n");
     while(fgets(str,100,ptr)){
         printf("%s\n",str);
     }
@@ -172,6 +176,7 @@ void existingPatient(){
     char name[100];
     printf("Enter the name : ");
     fflush(stdin);
+    getchar();
     scanf("%[^\n]s",name);
     printf("Enter the password : ");
     fflush(stdin);
@@ -183,12 +188,14 @@ void existingPatient(){
     //  }
       if(res==1){
         printf("Successfully logged in.\n");
+        baseline();
         printf("Choose the option\n1. Show Profile \n2. Update Profile \n3. Visit Record \n4. Schedule Visit\n\n");
         printf("Enter the option : ");
         fflush(stdin);
         int ch;
         scanf("%d",&ch);
         printf("\n");
+        baseline();
         char path1[100];
         char path2[100];
         char path3[100];
@@ -225,6 +232,7 @@ void existingPatient(){
      else{
        printf("Sorry. User not authorized!\n");
      }
+     baseline();
 }
 
 //newPatient() function
@@ -248,6 +256,7 @@ void createPatient(char *patientPass){
     //Code to input patient details
     printf("Enter your full name : ");
     fflush(stdin);
+    getchar();
     fgets(patient.name,100,stdin);
     printf("Enter your sex : ");
     fgets(patient.sex,100,stdin);
@@ -325,9 +334,10 @@ for(int i=0 ; i < 166 ; i++) printf("*");
 }*/
 void doctor_nextmenu() {
 	baseline();
-	printf("1.Patient Record(Press 1)\n2.Scheduled vist(Press 1)\nEnter any option : \n");
+	printf("1.Patient Record(Press 1)\n2.Scheduled vist(Press 2)\nEnter any option : \n");
     fflush(stdin);
 	scanf("%d",&opt);
+   baseline();
     FILE *fp1;
     FILE *fp2;
     switch (opt)
@@ -336,7 +346,7 @@ void doctor_nextmenu() {
      
      fp1 = fopen("Patients/database.txt","r");
      char str1[100];
-     printf("PatientID                                     NAME\n");
+     printf("PatientID                                         NAME\n");
      if(fgets(str1,100,fp1)){
         rewind(fp1);
       while(fgets(str1,100,fp1)){
@@ -361,6 +371,8 @@ void doctor_nextmenu() {
      fp2 = fopen("doctorVisit.txt","r");
      char str2[100];
      if(fgets(str2,100,fp2)){
+       rewind(fp2);
+       printf("PatientID       Name                       Doctor                Date\n");
        while(fgets(str2,100,fp2)){
           printf("%s",str2);
         }
@@ -446,6 +458,7 @@ void updatePatient(char *path){
     //updating name
     printf("Want to update name?(y/n) : ");
     fflush(stdin);
+    getchar();
     scanf("%c",&c);
     if(c == 'y' || c == 'Y'){
         printf("Enter the new name : ");
@@ -466,6 +479,7 @@ void updatePatient(char *path){
     char c1;
     printf("Want to update age?(y/n) : ");
     fflush(stdin);
+    getchar();
     scanf("%c",&c1);
     if(c1 == 'y' || c1 == 'Y'){
         printf("Enter the new age : ");
@@ -484,6 +498,7 @@ void updatePatient(char *path){
     char c2;
     printf("Want to update contact?(y/n) : ");
     fflush(stdin);
+    getchar();
     scanf("%c",&c2);
     if(c2 == 'y' || c2 == 'Y'){
         printf("Enter the new contact : ");
@@ -502,6 +517,7 @@ void updatePatient(char *path){
     char c3;
      printf("Want to update email?(y/n) : ");
      fflush(stdin);
+     getchar();
     scanf("%c",&c3);
     if(c3 == 'y' || c3 == 'Y'){
         printf("Enter the new email : ");
@@ -519,6 +535,7 @@ void updatePatient(char *path){
     char c4;
      printf("Want to update address?(y/n) : ");
      fflush(stdin);
+     getchar();
     scanf("%c",&c4);
     if(c4 == 'y' || c4 == 'Y'){
         printf("Enter the new address : ");
@@ -575,7 +592,6 @@ void extractPD(FILE *ptr,char* path,char *patientid){
     char input[100];
     char p[100];
     char ch[100];
-    // extractText(ptr,path,0,input);
     fscanf(ptr,"%s %s %s",input,ch,p);
     strcpy(patientid,p);
 }
