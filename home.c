@@ -27,7 +27,7 @@ char hospital_name[] = "IITJ HOSPIAL";
 char password[100];
 int opt;
 void baseline();
-//void generateMD5Hash(const char *password, unsigned char *hash);
+
 void doctor_nextmenu();
 void doctor_menu();
 void patient_menu();
@@ -129,8 +129,7 @@ void scheduleVisit(char *name,char *patientid,char *path, char *path1){
     FILE *fp;
     fp = fopen("doctorVisit.txt","a+");
     
-    // FILE *fptr;
-    // fptr = fopen("Patients/profile_25042004.txt","r");
+   
 
     FILE *ptr;
     ptr = fopen(path,"a+");
@@ -182,10 +181,7 @@ void existingPatient(){
     fflush(stdin);
     scanf("%s",password);
     int res = searchPatient(password);
-    // if(patientid == 0)
-    //  {
-    //     printf("Sorry. User not authorized!\n");
-    //  }
+   
       if(res==1){
         printf("Successfully logged in.\n");
         baseline();
@@ -326,12 +322,7 @@ int patientId(char* contact,char* dob){
 void baseline() {
 for(int i=0 ; i < 166 ; i++) printf("*");
 }
-/*void generateMD5Hash(const char *password, unsigned char *hash) {
-    MD5_CTX md5Context;
-    MD5_Init(&md5Context);
-    MD5_Update(&md5Context, password, strlen(password));
-    MD5_Final(hash, &md5Context);
-}*/
+
 void doctor_nextmenu() {
 	baseline();
 	printf("1.Patient Record(Press 1)\n2.Scheduled vist(Press 2)\nEnter any option : \n");
