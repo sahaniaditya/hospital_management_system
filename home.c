@@ -2,6 +2,7 @@
 #include<string.h>
 #include <stdlib.h>
 #include<time.h>
+#include<ctype.h>
 
 
 #define MAX_LENGTH 50
@@ -9,7 +10,7 @@ void removeBlankLines();
 void showProfile(char*);
 void newPatient();
 void visitRecord(char*);
-void scheduleVisit(char*,char*);
+void scheduleVisit();
 void existingPatient();
 int searchPatient(char*);
 void updatePatient(char*);
@@ -100,44 +101,53 @@ int searchPatient(char *pass){
    FILE *ptr;
    ptr = fopen("Patients/database.txt","r");
    char str[100];
+   char numberString[100];  
    while(fgets(str,100,ptr)){
-    char extractedString[9];  
-    strncpy(extractedString, str, 8);
-    extractedString[8] = '\0'; 
+  
+    char *numberStart = str;
+    while (*numberStart != '\0' && !isdigit(*numberStart)) {
+        numberStart++;
+    }
 
-    if(strcmp(pass,extractedString) == 0)
-     return 1;
+    // Copy the number characters to numberString
+    int i = 0;
+    while (*numberStart != '\0' && isdigit(*numberStart)) {
+        numberString[i++] = *numberStart++;
+    }
+    numberString[i] = '\0';
+
    }
-   return 0;
+    if(strcmp(pass,numberString) == 0)
+     {return 1;}
+    else{
+        return 0;
+    }
+  
 }
 //scheduleVisit() function
-void scheduleVisit(char *path, char *path1){
+void scheduleVisit(char *name,char *patientid,char *path, char *path1){
     FILE *fp;
     fp = fopen("doctorVisit.txt","a+");
     
-    FILE *fptr;
-    fptr = fopen(path1,"r");
+    // FILE *fptr;
+    // fptr = fopen("Patients/profile_25042004.txt","r");
 
     FILE *ptr;
     ptr = fopen(path,"a+");
     int n = 1;
     int id  = 0;
     char date[100];
-    char str[100];
-    char name[100];
+    
     printf("Enter the date (DDMMYYYY) on which you want to visit : ");
     fflush(stdin);
     scanf("%s",date);
-    extractText(fptr,path,n,str);
-    strcpy(name,str);
-    char patientid[100];
-    extractText(fptr,path,id,patientid);
-    fclose(fptr);
-    
-    visitCount++;
-    fprintf(ptr,"%d. %s                       %s             %s         ",visitCount,name,doctor,date);
+    if(ptr != NULL){
+    fprintf(ptr,"%s   %s                       %s             %s\n",patientid,name,doctor,date);
+    }else{
+        printf("Sorry. Not able to write  in file.\n");
+    }
+    fprintf(fp,"%s   %s                       %s             %s\n",patientid,name,doctor,date);
     fclose(ptr);
-    fprintf(fp,"%s   %s                       %s             %s         ",patientid,name,doctor,date);
     fclose(fp);
    
 }
@@ -159,15 +169,19 @@ void visitRecord(char *path){
 //existingPatient() function
 void existingPatient(){
     char password[100];
+    char name[100];
+    printf("Enter the name : ");
+    fflush(stdin);
+    scanf("%[^\n]s",name);
     printf("Enter the password : ");
+    fflush(stdin);
     scanf("%s",password);
-    char patientid[100];
-    int res = searchPatient(patientid);
-    if(patientid == 0)
-     {
-        printf("Sorry. User not authorized!\n");
-     }
-     else{
+    int res = searchPatient(password);
+    // if(patientid == 0)
+    //  {
+    //     printf("Sorry. User not authorized!\n");
+    //  }
+      if(res==1){
         printf("Successfully logged in.\n");
         printf("Choose the option\n1. Show Profile \n2. Update Profile \n3. Visit Record \n4. Schedule Visit\n\n");
         printf("Enter the option : ");
@@ -201,12 +215,15 @@ void existingPatient(){
         
         createPath(path4,password,"visit");
         createPath(path5,password,"profile");
-        scheduleVisit(path4,path5);
+        scheduleVisit(name,password,path4,path5);
         break;  
         default:
          printf("Invalid Option.");
             break;
         }
+     }
+     else{
+       printf("Sorry. User not authorized!\n");
      }
 }
 
@@ -321,6 +338,7 @@ void doctor_nextmenu() {
      char str1[100];
      printf("PatientID                                     NAME\n");
      if(fgets(str1,100,fp1)){
+        rewind(fp1);
       while(fgets(str1,100,fp1)){
       printf("%s\n",str1);
       }
