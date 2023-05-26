@@ -5,12 +5,12 @@
 
 
 #define MAX_LENGTH 50
+void removeBlankLines();
 void showProfile(char*);
-void medicalHistory();
 void newPatient();
 void visitRecord(char*);
 void scheduleVisit(char*,char*);
-void existingPateint();
+void existingPatient();
 int searchPatient(char*);
 void updatePatient(char*);
 void createPatient(char*);
@@ -40,16 +40,13 @@ struct Patient{
     char contact[100];
     char email[100];
     char address[100];
+    char medHistory[1000];
 };
 
 
-
+//int main() function
 int main(){
-
-    FILE *fptr;
-    //createPatient(fptr);
-    char path[100];
-    //updatePatient(path);
+    
     for(int i=0;i<10;i++) printf(" ");
     for(int i=0 ; i< 63 ; i++)
     {
@@ -79,6 +76,9 @@ int main(){
     }
     return 0;
 }
+
+
+
 //showProfile() function
 void showProfile(char *path)
 {
@@ -93,6 +93,7 @@ void showProfile(char *path)
     else{
         printf("Sorry. Not able to open the file.\n");
     }
+    fclose(ptr);
 }
 //searchPatient() function
 int searchPatient(char *pass){
@@ -112,27 +113,33 @@ int searchPatient(char *pass){
 //scheduleVisit() function
 void scheduleVisit(char *path, char *path1){
     FILE *fp;
-    fp = fopen("doctorVisit.txt","a");
+    fp = fopen("doctorVisit.txt","a+");
     
     FILE *fptr;
     fptr = fopen(path1,"r");
+
     FILE *ptr;
-    ptr = fopen(path,"a");
+    ptr = fopen(path,"a+");
     int n = 1;
     int id  = 0;
     char date[100];
     char str[100];
     char name[100];
-    printf("Enter the date(DDMMYYYY) on which you want to visit : \n");
+    printf("Enter the date (DDMMYYYY) on which you want to visit : ");
+    fflush(stdin);
     scanf("%s",date);
     extractText(fptr,path,n,str);
+    strcpy(name,str);
     char patientid[100];
     extractText(fptr,path,id,patientid);
-    strcpy(name,str);
+    fclose(fptr);
     
     visitCount++;
     fprintf(ptr,"%d. %s                       %s             %s         ",visitCount,name,doctor,date);
+    fclose(ptr);
     fprintf(fp,"%s   %s                       %s             %s         ",patientid,name,doctor,date);
+    fclose(fp);
+   
 }
 //visitRecord() function
 void visitRecord(char *path){
@@ -162,7 +169,7 @@ void existingPatient(){
      }
      else{
         printf("Successfully logged in.\n");
-        printf("Choose the option\n1. Show Profile \n2. Update Profile \n3. Visit Record \n4. Schedule Visit \n5. Medical History\n\n");
+        printf("Choose the option\n1. Show Profile \n2. Update Profile \n3. Visit Record \n4. Schedule Visit\n\n");
         printf("Enter the option : ");
         fflush(stdin);
         int ch;
@@ -195,20 +202,14 @@ void existingPatient(){
         createPath(path4,password,"visit");
         createPath(path5,password,"profile");
         scheduleVisit(path4,path5);
-        break; 
-        case 5:
-         medicalHistory();
-        break; 
+        break;  
         default:
          printf("Invalid Option.");
             break;
         }
      }
 }
-//medicalHistory() function
-void medicalHistory(){
-    printf("\nThis is medical history");
-}
+
 //newPatient() function
 void newPatient(){
     char patientPass[100];
@@ -224,7 +225,7 @@ void newPatient(){
 void createPatient(char *patientPass){
     FILE *data;
     FILE *pptr;
-    FILE *hptr;
+    
     FILE *vptr;
     struct Patient patient;
     //Code to input patient details
@@ -243,6 +244,9 @@ void createPatient(char *patientPass){
     fgets(patient.age,100,stdin);
     printf("Enter your phone number : ");
     fgets(patient.contact,100,stdin);
+    printf("Enter your medical history : ");
+    fgets(patient.medHistory,1000,stdin);
+
     //Code to generate Patient Id
     int patientid = patientId(patient.age,patient.dob);
     char patient_id[100];
@@ -255,18 +259,18 @@ void createPatient(char *patientPass){
     //Create the unique file path
     char pathVisit[100];
     char pathProfile[100];
-    char pathHistory[100];
+    
     createPath(pathVisit,patient_id,"visit");
-    createPath(pathHistory,patient_id,"history");
+   
     createPath(pathProfile,patient_id,"profile");
     
     
     //Code to create patient file
     vptr = fopen(pathVisit,"w");
-    hptr = fopen(pathHistory,"w");
+   
     pptr = fopen(pathProfile,"w");
-    data = fopen("Patients/database.txt","a+");
-    fprintf(data,"%s                                           %s",patient_id,patient.name);
+    
+    
     fprintf(pptr,"PatientID : %s                      Date : %s",patient_id,date);
     fprintf(pptr,"Name : %s",patient.name);
     fprintf(pptr,"Age : %s",patient.age);
@@ -274,7 +278,12 @@ void createPatient(char *patientPass){
     fprintf(pptr,"Phone : %s",patient.contact);
     fprintf(pptr,"Email : %s",patient.email);
     fprintf(pptr,"Address : %s",patient.address);
+    fprintf(pptr,"Medical History : %s",patient.medHistory);
     fclose(pptr);
+    data = fopen("Patients/database.txt","a+");
+    fprintf(data,"%s                                           %s",patient_id,patient.name);
+    fclose(data);
+    
     
 }
 //patientId() function
@@ -305,33 +314,40 @@ void doctor_nextmenu() {
     {
     case 1:
      
-     fp1 = fopen("database.txt","r");
+     fp1 = fopen("Patients/database.txt","r");
      char str1[100];
-     printf("PatientID                                            NAME\n");
-     while((str1,100,fp1)){
-        printf("%s\n",str1);
-     }
-   
+     printf("PatientID                                     NAME\n");
+     if(fgets(str1,100,fp1)){
+      while(fgets(str1,100,fp1)){
+      printf("%s\n",str1);
+      }
      int id;
      printf("\nEnter the id of patient to see record : ");
      scanf("%d",&id);
      char patient_id[100];
      sprintf(patient_id, "%d", id);
      char path1[100];
-     char path2[100];
-     createPath(path2,patient_id,"history");
+     
      createPath(path1,patient_id,"profile");
      showProfile(path1);
-     medicalHistory(path2);
+     }
+     else{
+        printf("NO DATA TO DISPLAY.\n");
+     }
 
     break;
     case 2:
      fp2 = fopen("doctorVisit.txt","r");
      char str2[100];
-     while(fgets(str2,100,fp2)){
-       printf("%s",str2);
-     }
+     if(fgets(str2,100,fp2)){
+       while(fgets(str2,100,fp2)){
+          printf("%s",str2);
+        }
      printf("\n");
+     }
+     else{
+        printf("NO DATA TO DISPLAY.\n");
+     }
     break;
     default:
         break;
@@ -350,6 +366,7 @@ void doctor_menu() {
     else {
    	 printf("Incorrect password. Access denied.\n");
 	}
+    main();
 }
 void patient_menu() {
 	printf("\n1. NEW \n2. EXISTING\nEnter any option : ");
@@ -364,6 +381,7 @@ void patient_menu() {
         default:
          printf("Invalid Option.\n"); 
     }
+    main();
 		
 }
 void createDate(char *date ){
@@ -378,8 +396,8 @@ struct tm* ptr;
 
 void createPath(char *path,char *patientid,char *text){
     char filename[MAX_LENGTH];
-    sprintf(filename, "Patients/%s_%s.txt",patientid,text);
-    memcpy(path,filename,50);
+    sprintf(filename, "Patients/%s_%s.txt",text,patientid);
+    strcpy(path,filename);
 }
 //updatePatient() function
 void updatePatient(char *path){
@@ -414,18 +432,19 @@ void updatePatient(char *path){
        // fflush(stdin);
         scanf("%[^\n]s",name);
         //name[strlen(name) - 1] = '\0';
-        printf("%s",name);
+        printf("%s\n",name);
     }
     else{
        char str[100]; 
        extractText(fptr,path,n,str);
        strcpy(name,str);
+       printf("%s\n",name);
     }
-    printf("\n");
+    
     //updating age
     char c1;
-     printf("Want to update age?(y/n) : ");
-     fflush(stdin);
+    printf("Want to update age?(y/n) : ");
+    fflush(stdin);
     scanf("%c",&c1);
     if(c1 == 'y' || c1 == 'Y'){
         printf("Enter the new age : ");
@@ -437,8 +456,9 @@ void updatePatient(char *path){
        char str[100];
        extractText(fptr,path,a,str);
        strcpy(age,str);
+       printf("%s\n",age);
     }
-    printf("\n");
+    
     //update the phone number
     char c2;
     printf("Want to update contact?(y/n) : ");
@@ -456,7 +476,7 @@ void updatePatient(char *path){
        strcpy(contact,str);
        printf("%s\n",contact);
     }
-    printf("\n");
+    
     //update the email
     char c3;
      printf("Want to update email?(y/n) : ");
@@ -498,14 +518,17 @@ void updatePatient(char *path){
     createDate(date);
     extractPD(fptr,path,patientid);
     fptr = fopen(path,"w");
-    fprintf(fptr,"PatientID : %s                      Date : %s",patientid,date);
+    fprintf(fptr,"PatientID : %s                      Date : %s\n",patientid,date);
     fprintf(fptr,"Name : %s\n",name);
     fprintf(fptr,"Age : %s\n",age);
-    fprintf(fptr,"Sex : %s",sex);
-    fprintf(fptr,"Phone : %s",contact);
-    fprintf(fptr,"Email : %s",email);
+    fprintf(fptr,"Sex : %s\n",sex);
+    fprintf(fptr,"Phone : %s\n",contact);
+    fprintf(fptr,"Email : %s\n",email);
     fprintf(fptr,"Address : %s\n",address);
     fclose(fptr);
+    removeBlankLines(path);
+
+    
     
 }
 void extractText(FILE *ptr ,char *path, int i, char *name){
@@ -534,4 +557,72 @@ void extractPD(FILE *ptr,char* path,char *patientid){
     // extractText(ptr,path,0,input);
     fscanf(ptr,"%s %s %s",input,ch,p);
     strcpy(patientid,p);
+}
+//removeBlankLines()
+void removeBlankLines(char *filename) {
+    // Open the file for reading
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Error opening file: %s\n", filename);
+        return;
+    }
+
+    // Create a temporary file to write the modified content
+    FILE *tempFile = tmpfile();
+    if (tempFile == NULL) {
+        printf("Error creating temporary file.\n");
+        fclose(file);
+        return;
+    }
+
+    char line[1000];
+
+    // Read each line from the original file
+    while (fgets(line, sizeof(line), file)) {
+        // Remove trailing newline character
+        line[strcspn(line, "\n")] = '\0';
+
+        // Check if the line is empty or contains only whitespace characters
+        int isEmpty = 1;
+        for (int i = 0; i < strlen(line); i++) {
+            if (line[i] != ' ' && line[i] != '\t') {
+                isEmpty = 0;
+                break;
+            }
+        }
+
+        // If the line is not empty, write it to the temporary file
+        if (!isEmpty) {
+            fputs(line, tempFile);
+            fputc('\n', tempFile);
+        }
+    }
+
+    // Close the original file
+    fclose(file);
+
+    // Open the original file for writing
+    file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("Error opening file for writing: %s\n", filename);
+        fclose(tempFile);
+        return;
+    }
+
+    // Move the file pointer of the temporary file to the beginning
+    rewind(tempFile);
+
+    // Copy the content from the temporary file to the original file
+    int c;
+    while ((c = fgetc(tempFile)) != EOF) {
+        fputc(c, file);
+    }
+
+    // Close the temporary file
+    fclose(tempFile);
+
+    // Close the original file
+    fclose(file);
+
+   
 }
