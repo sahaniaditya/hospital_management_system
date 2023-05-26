@@ -6,7 +6,6 @@
 
 #define MAX_LENGTH 50
 void showProfile(char*);
-void medicalHistory();
 void newPatient();
 void visitRecord(char*);
 void scheduleVisit(char*,char*);
@@ -40,6 +39,7 @@ struct Patient{
     char contact[100];
     char email[100];
     char address[100];
+    char medhistory[1000];
 };
 
 
@@ -162,7 +162,7 @@ void existingPatient(){
      }
      else{
         printf("Successfully logged in.\n");
-        printf("Choose the option\n1. Show Profile \n2. Update Profile \n3. Visit Record \n4. Schedule Visit \n5. Medical History\n\n");
+        printf("Choose the option\n1. Show Profile \n2. Update Profile \n3. Visit Record \n4. Schedule Visit\n\n");
         printf("Enter the option : ");
         fflush(stdin);
         int ch;
@@ -195,20 +195,14 @@ void existingPatient(){
         createPath(path4,password,"visit");
         createPath(path5,password,"profile");
         scheduleVisit(path4,path5);
-        break; 
-        case 5:
-         medicalHistory();
-        break; 
+        break;
         default:
          printf("Invalid Option.");
             break;
         }
      }
 }
-//medicalHistory() function
-void medicalHistory(){
-    printf("\nThis is medical history");
-}
+
 //newPatient() function
 void newPatient(){
     char patientPass[100];
@@ -224,7 +218,7 @@ void newPatient(){
 void createPatient(char *patientPass){
     FILE *data;
     FILE *pptr;
-    FILE *hptr;
+    //FILE *hptr;
     FILE *vptr;
     struct Patient patient;
     //Code to input patient details
@@ -243,6 +237,8 @@ void createPatient(char *patientPass){
     fgets(patient.age,100,stdin);
     printf("Enter your phone number : ");
     fgets(patient.contact,100,stdin);
+    printf("Enter your medical history : ");
+    fgets(patient.medhistory,1000,stdin);
     //Code to generate Patient Id
     int patientid = patientId(patient.age,patient.dob);
     char patient_id[100];
@@ -257,16 +253,14 @@ void createPatient(char *patientPass){
     char pathProfile[100];
     char pathHistory[100];
     createPath(pathVisit,patient_id,"visit");
-    createPath(pathHistory,patient_id,"history");
+    //createPath(pathHistory,patient_id,"history");
     createPath(pathProfile,patient_id,"profile");
     
     
     //Code to create patient file
     vptr = fopen(pathVisit,"w");
-    hptr = fopen(pathHistory,"w");
+    //hptr = fopen(pathHistory,"w");
     pptr = fopen(pathProfile,"w");
-    data = fopen("Patients/database.txt","a+");
-    fprintf(data,"%s                                           %s",patient_id,patient.name);
     fprintf(pptr,"PatientID : %s                      Date : %s",patient_id,date);
     fprintf(pptr,"Name : %s",patient.name);
     fprintf(pptr,"Age : %s",patient.age);
@@ -274,7 +268,11 @@ void createPatient(char *patientPass){
     fprintf(pptr,"Phone : %s",patient.contact);
     fprintf(pptr,"Email : %s",patient.email);
     fprintf(pptr,"Address : %s",patient.address);
+    fprintf(pptr,"Medical History : %s",patient.medhistory);
     fclose(pptr);
+    data = fopen("Patients/database.txt","a+");
+    fprintf(data,"%s                                           %s",patient_id,patient.name);
+    fclose(data);
     
 }
 //patientId() function
@@ -318,11 +316,10 @@ void doctor_nextmenu() {
      char patient_id[100];
      sprintf(patient_id, "%d", id);
      char path1[100];
-     char path2[100];
-     createPath(path2,patient_id,"history");
+
      createPath(path1,patient_id,"profile");
      showProfile(path1);
-     medicalHistory(path2);
+     
 
     break;
     case 2:
